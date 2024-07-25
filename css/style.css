@@ -1,0 +1,34 @@
+/* Style for Lead Magnet Pro Plugin */
+#lead-magnet-pro-form {
+    max-width: 400px;
+    margin: 0 auto;
+}
+#lead-magnet-pro-form input,
+#lead-magnet-pro-form button {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+}
+.dashboard-overview {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.dashboard-overview ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.dashboard-overview ul li {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.dashboard-overview ul li strong {
+    display: inline-block;
+    width: 150px;
+}
