@@ -1,9 +1,11 @@
 <?php
 /*
 Plugin Name: Lead Magnet
+Plugin URI: https://www.webnx.in/
 Description: Create and manage lead magnet forms dynamically.
-Version: 1.4
 Author: WebNX
+Author URI: https://www.webnx.in/
+Version: 1.0
 */
 
 // Exit if accessed directly

@@ -26,8 +26,8 @@ function lead_magnet_pro_form_shortcode($atts) {
         <form class="lead-magnet-pro-form" data-form-id="<?php echo $form->id; ?>" method="POST" action="<?php echo admin_url('admin-ajax.php'); ?>">
             <input type="hidden" name="action" value="lead_magnet_pro_form">
             <input type="hidden" name="form_id" value="<?php echo $form->id; ?>">
-            <input type="text" name="name" placeholder="Your Name" required>
-            <input type="email" name="email" placeholder="Your Email" required>
+            <input type="text" name="name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email Address" required>
             <button type="submit" style="padding:10px">Download</button>
         </form>
         <div class="lead-magnet-pro-response" id="response-<?php echo $form->id; ?>"></div>
@@ -37,31 +37,33 @@ function lead_magnet_pro_form_shortcode($atts) {
 }
 add_shortcode('lead_magnet_pro_form', 'lead_magnet_pro_form_shortcode');
 
-// Enqueue form submission script
-function lead_magnet_pro_enqueue_form_script() {
-    ?>
-    <script type="text/javascript">
-    jQuery(document).ready(function($) {
-        $('.lead-magnet-pro-form').on('submit', function(e) {
-            e.preventDefault();
+if (!function_exists('lead_magnet_pro_enqueue_form_script')) {
+    // Enqueue form submission script
+    function lead_magnet_pro_enqueue_form_script() {
+        ?>
+        <script type="text/javascript">
+        jQuery(document).ready(function($) {
+            $('.lead-magnet-pro-form').on('submit', function(e) {
+                e.preventDefault();
 
-            var form = $(this);
-            var formId = form.data('form-id');
-            var data = form.serialize();
+                var form = $(this);
+                var formId = form.data('form-id');
+                var data = form.serialize();
 
-            $.post(form.attr('action'), data, function(response) {
-                var responseDiv = $('#response-' + formId);
-                if (response.success) {
-                    responseDiv.html('<p>' + response.data.message + '</p><a style="color:blue"  href="' + response.data.download_link + '" target="_blank" download >Click to Download Resources</a>');
-                    form[0].reset();
-                } else {
-                    responseDiv.html('<p>' + response.data + '</p>');
-                }
+                $.post(form.attr('action'), data, function(response) {
+                    var responseDiv = $('#response-' + formId);
+                    if (response.success) {
+                        responseDiv.html('<p>' + response.data.message + '</p>');
+                        form[0].reset();
+                    } else {
+                        responseDiv.html('<p>' + response.data + '</p>');
+                    }
+                });
             });
         });
-    });
-    </script>
-    <?php
+        </script>
+        <?php
+    }
 }
 add_action('wp_footer', 'lead_magnet_pro_enqueue_form_script');
 ?>
