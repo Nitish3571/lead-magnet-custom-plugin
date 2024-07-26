@@ -52,6 +52,7 @@ function lead_magnet_pro_manage_forms() {
         <h1>Manage Lead Magnet Forms</h1>
         <form method="POST">
             <h2>Add New Form</h2>
+            <p>Note: use shortcode [lead_magnet_pro_form id=""] where id existing form id </p>
             <input type="text" name="form_title" placeholder="Form Title" required>
             <input type="text" name="form_shortcode" placeholder="Form Shortcode" required></input>
             <input type="text" name="form_download_link" placeholder="Download Link" required>
