@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Lead Magnet
-Plugin URI: https://www.webnx.in/
+Plugin Name: Lead Magnet Pro
 Description: Create and manage lead magnet forms dynamically.
 Author: WebNX
 Author URI: https://www.webnx.in/
-Version: 1.0
+Version: 1.2
+Update URI: https://www.webnx.in/
 */
 
 // Exit if accessed directly
@@ -24,6 +24,7 @@ require_once LEAD_MAGNET_PRO_PATH . 'includes/shortcode.php';
 // Register activation and deactivation hooks
 register_activation_hook(__FILE__, 'lead_magnet_pro_activate');
 register_deactivation_hook(__FILE__, 'lead_magnet_pro_deactivate');
+register_uninstall_hook(__FILE__, 'lead_magnet_pro_uninstall');
 
 // Register plugin activation function
 function lead_magnet_pro_activate() {
@@ -59,6 +60,60 @@ function lead_magnet_pro_activate() {
 function lead_magnet_pro_deactivate() {
     // Optionally, code to run on plugin deactivation
 }
+
+function lead_magnet_pro_uninstall() {
+    global $wpdb;
+
+    // Define the custom table names
+    $table_name = $wpdb->prefix . 'lead_magnet_pro_leads';
+    $forms_table = $wpdb->prefix . 'lead_magnet_pro_forms';
+
+    // Delete the custom tables
+    $wpdb->query("DROP TABLE IF EXISTS $table_name");
+    $wpdb->query("DROP TABLE IF EXISTS $forms_table");
+
+    // If your plugin also adds options or settings, you should delete them here
+    delete_option('lead_magnet_pro_settings');
+}
+
+// Function to delete the plugin directory
+function lead_magnet_pro_delete_plugin() {
+    $plugin_dir = plugin_dir_path(__FILE__);
+
+    // Ensure we only delete files within the plugin directory
+    $files = new RecursiveIteratorIterator(
+        new RecursiveDirectoryIterator($plugin_dir, RecursiveDirectoryIterator::SKIP_DOTS),
+        RecursiveIteratorIterator::CHILD_FIRST
+    );
+
+    foreach ($files as $fileinfo) {
+        $todo = ($fileinfo->isDir() ? 'rmdir' : 'unlink');
+        $todo($fileinfo->getRealPath());
+    }
+
+    rmdir($plugin_dir);
+}
+
+// Add settings link on plugin page
+function lead_magnet_pro_add_settings_link($links) {
+    $settings_link = '<a href="admin.php?page=lead-magnet-pro">' . __('Settings') . '</a>';
+    $uninstall_link = '<a href="' . admin_url('plugins.php?action=lead_magnet_pro_uninstall&_wpnonce=' . wp_create_nonce('lead_magnet_pro_uninstall')) . '" onclick="return confirm(\'Are you sure you want to uninstall this plugin? Note:-Your All Data Losses!\');">' . __('Uninstall') . '</a>';
+    array_unshift($links, $settings_link, $uninstall_link);
+    return $links;
+}
+add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'lead_magnet_pro_add_settings_link');
+
+// Handle the uninstall action
+function lead_magnet_pro_handle_uninstall() {
+    if (isset($_GET['action']) && $_GET['action'] === 'lead_magnet_pro_uninstall' && check_admin_referer('lead_magnet_pro_uninstall')) {
+        lead_magnet_pro_uninstall();
+        deactivate_plugins(plugin_basename(__FILE__));
+        lead_magnet_pro_delete_plugin();
+        wp_redirect(admin_url('plugins.php?uninstalled=true'));
+        exit;
+    }
+}
+add_action('admin_init', 'lead_magnet_pro_handle_uninstall');
 
 // Enqueue scripts and styles
 function lead_magnet_pro_enqueue_scripts() {
